@@ -1,12 +1,12 @@
 package com.wondollar.api.post.request;
 
+import com.wondollar.api.post.domain.Post;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class PostCreate {
 
     @NotBlank(message = "title 값은 필수입니다.")
@@ -14,4 +14,17 @@ public class PostCreate {
 
     @NotBlank(message = "content 값은 필수입니다.")
     private String content;
+
+    @Builder
+    public PostCreate(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public Post toPost() {
+        return Post.builder()
+                .title(this.title)
+                .content(this.content)
+                .build();
+    }
 }
