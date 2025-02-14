@@ -1,6 +1,5 @@
 package com.wondollar.api.post.domain;
 
-import com.wondollar.api.post.request.PostCreate;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

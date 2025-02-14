@@ -3,23 +3,23 @@ package com.wondollar.api.post.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wondollar.api.post.domain.Post;
 import com.wondollar.api.post.repository.PostRepository;
-import com.wondollar.api.post.request.PostCreate;
+import com.wondollar.api.post.request.PostCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.MediaType.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -43,7 +43,7 @@ class PostControllerTest {
     @Test
     void test() throws Exception {
         // given
-        PostCreate request = PostCreate.builder()
+        PostCreateRequest request = PostCreateRequest.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .build();
@@ -51,7 +51,7 @@ class PostControllerTest {
 
         System.out.println(jsonRequest);
 
-        //when, then
+        // expected
         mockMvc.perform(post("/api/v1/posts")
                         .contentType(APPLICATION_JSON)
                         .content(jsonRequest)
@@ -76,7 +76,7 @@ class PostControllerTest {
     @Test
     void post_저장_테스트() throws Exception {
         // given
-        PostCreate request = PostCreate.builder()
+        PostCreateRequest request = PostCreateRequest.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .build();
@@ -99,9 +99,9 @@ class PostControllerTest {
     }
 
     @Test
-    void post_조회_테스트() throws Exception {
+    void post_단건조회_테스트() throws Exception {
         // given
-        PostCreate request = PostCreate.builder()
+        PostCreateRequest request = PostCreateRequest.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .build();
@@ -123,6 +123,34 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("제목입니다"))
                 .andExpect(jsonPath("$.content").value("내용입니다"))
+                .andDo(print());
+    }
+
+    @Test
+    void post_여러개조회_테스트() throws Exception {
+        // given
+        Post post1 = Post.builder()
+                .title("1")
+                .content("1")
+                .build();
+        postRepository.save(post1);
+
+        Post post2 = Post.builder()
+                .title("2")
+                .content("2")
+                .build();
+        postRepository.save(post2);
+
+        // expected
+        mockMvc.perform(get("/api/v1/posts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$[0].id").value(post1.getId()))
+                .andExpect(jsonPath("$[0].title").value(post1.getTitle()))
+                .andExpect(jsonPath("$[0].content").value(post1.getContent()))
+                .andExpect(jsonPath("$[1].id").value(post2.getId()))
+                .andExpect(jsonPath("$[1].title").value(post2.getTitle()))
+                .andExpect(jsonPath("$[1].content").value(post2.getContent()))
                 .andDo(print());
     }
 }

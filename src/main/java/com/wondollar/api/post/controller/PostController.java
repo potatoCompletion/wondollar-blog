@@ -1,6 +1,6 @@
 package com.wondollar.api.post.controller;
 
-import com.wondollar.api.post.request.PostCreate;
+import com.wondollar.api.post.request.PostCreateRequest;
 import com.wondollar.api.post.response.PostResponse;
 import com.wondollar.api.post.service.PostService;
 import jakarta.validation.Valid;
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -20,14 +21,20 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity post(@RequestBody @Valid PostCreate request) {
+    public ResponseEntity createPost(@RequestBody @Valid PostCreateRequest request) {
         Long id = postService.write(request);
         return ResponseEntity.created(URI.create("/posts/" + id)).build();
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> get(@PathVariable(name = "postId") Long id) {
-        PostResponse response = postService.getPostById(id);
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long postId) {
+        PostResponse response = postService.getPostById(postId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostResponse>> getPosts() {
+        List<PostResponse> responseList = postService.getPosts();
+        return ResponseEntity.ok(responseList);
     }
 }

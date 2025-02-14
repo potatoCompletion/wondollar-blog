@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostCreate {
+public class PostCreateRequest {
 
     @NotBlank(message = "title 값은 필수입니다.")
     private String title;
@@ -16,7 +16,7 @@ public class PostCreate {
     private String content;
 
     @Builder
-    public PostCreate(String title, String content) {
+    public PostCreateRequest(String title, String content) {
         this.title = title;
         this.content = content;
     }
