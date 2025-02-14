@@ -6,6 +6,8 @@ import com.wondollar.api.post.request.PostCreateRequest;
 import com.wondollar.api.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +32,9 @@ public class PostService {
         return PostResponse.fromPost(post);
     }
 
-    public List<PostResponse> getPosts() {
-        return postRepository.findAll()
+    public List<PostResponse> getPosts(int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        return postRepository.findAll(pageable)
                 .stream()
                 .map(post -> PostResponse.fromPost(post))
                 .collect(Collectors.toList());

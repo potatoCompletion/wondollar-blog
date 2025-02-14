@@ -34,7 +34,7 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostResponse>> getPosts() {
-        List<PostResponse> responseList = postService.getPosts();
+        List<PostResponse> responseList = postService.getPosts(1);
         return ResponseEntity.ok(responseList);
     }
 }

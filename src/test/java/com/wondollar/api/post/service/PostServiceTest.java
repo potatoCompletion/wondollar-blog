@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,20 +65,22 @@ class PostServiceTest {
     }
 
     @Test
-    void 글_여러개_조회() {
+    void 글_1페이지_조회() {
         // given
-        for (int i = 0; i < 50; i++) {
-            Post post = Post.builder()
-                    .title("제목입니다")
-                    .content("내용입니다")
-                    .build();
-            postRepository.save(post);
-        }
+        List<Post> requestPosts = IntStream.range(0, 30)
+                .mapToObj(i -> Post.builder()
+                        .title("제목 - " + i)
+                        .content("내용 - " + i)
+                        .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
 
         // when
-        List<PostResponse> postResponseList = postService.getPosts();
+        List<PostResponse> postResponseList = postService.getPosts(0);
 
         // then
-        assertEquals(50, postResponseList.size());
+        assertEquals(5, postResponseList.size());
+        assertEquals("제목 - 0", postResponseList.get(0).title());
+        assertEquals("내용 - 0", postResponseList.get(0).content());
     }
 }
