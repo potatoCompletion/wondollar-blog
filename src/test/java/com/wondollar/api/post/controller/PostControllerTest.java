@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -127,30 +130,30 @@ class PostControllerTest {
     }
 
     @Test
-    void post_여러개조회_테스트() throws Exception {
+    void post_페이지조회_테스트() throws Exception {
         // given
-        Post post1 = Post.builder()
-                .title("1")
-                .content("1")
-                .build();
-        postRepository.save(post1);
-
-        Post post2 = Post.builder()
-                .title("2")
-                .content("2")
-                .build();
-        postRepository.save(post2);
+        postRepository.saveAll(IntStream.range(1, 31)
+                .mapToObj(i -> Post.builder()
+                        .title("제목 - " + i)
+                        .content("내용 - " + i)
+                        .build())
+                .collect(Collectors.toList()));
 
         // expected
-        mockMvc.perform(get("/api/v1/posts"))
+        // page 1
+        mockMvc.perform(get("/api/v1/posts?page=1&size=10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(2)))
-                .andExpect(jsonPath("$[0].id").value(post1.getId()))
-                .andExpect(jsonPath("$[0].title").value(post1.getTitle()))
-                .andExpect(jsonPath("$[0].content").value(post1.getContent()))
-                .andExpect(jsonPath("$[1].id").value(post2.getId()))
-                .andExpect(jsonPath("$[1].title").value(post2.getTitle()))
-                .andExpect(jsonPath("$[1].content").value(post2.getContent()))
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].title").value("제목 - 1"))
+                .andExpect(jsonPath("$[0].content").value("내용 - 1"))
+                .andDo(print());
+
+        // page 2
+        mockMvc.perform(get("/api/v1/posts?page=2&size=10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].title").value("제목 - 11"))
+                .andExpect(jsonPath("$[0].content").value("내용 - 11"))
                 .andDo(print());
     }
 }

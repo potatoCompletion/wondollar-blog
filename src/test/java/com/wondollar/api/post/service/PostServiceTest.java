@@ -3,6 +3,7 @@ package com.wondollar.api.post.service;
 import com.wondollar.api.post.domain.Post;
 import com.wondollar.api.post.repository.PostRepository;
 import com.wondollar.api.post.request.PostCreateRequest;
+import com.wondollar.api.post.request.PostSearchRequest;
 import com.wondollar.api.post.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ class PostServiceTest {
     @Test
     void 글_1페이지_조회() {
         // given
-        List<Post> requestPosts = IntStream.range(0, 30)
+        List<Post> requestPosts = IntStream.range(1, 31)
                 .mapToObj(i -> Post.builder()
                         .title("제목 - " + i)
                         .content("내용 - " + i)
@@ -75,12 +76,17 @@ class PostServiceTest {
                 .collect(Collectors.toList());
         postRepository.saveAll(requestPosts);
 
+        PostSearchRequest postSearchRequest = PostSearchRequest.builder()
+                .page(1)
+                .size(10)
+                .build();
+
         // when
-        List<PostResponse> postResponseList = postService.getPosts(0);
+        List<PostResponse> postResponseList = postService.getPosts(postSearchRequest);
 
         // then
-        assertEquals(5, postResponseList.size());
-        assertEquals("제목 - 0", postResponseList.get(0).title());
-        assertEquals("내용 - 0", postResponseList.get(0).content());
+        assertEquals(10, postResponseList.size());
+        assertEquals("제목 - 1", postResponseList.get(0).title());
+        assertEquals("내용 - 1", postResponseList.get(0).content());
     }
 }

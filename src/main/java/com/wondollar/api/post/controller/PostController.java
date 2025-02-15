@@ -1,6 +1,7 @@
 package com.wondollar.api.post.controller;
 
 import com.wondollar.api.post.request.PostCreateRequest;
+import com.wondollar.api.post.request.PostSearchRequest;
 import com.wondollar.api.post.response.PostResponse;
 import com.wondollar.api.post.service.PostService;
 import jakarta.validation.Valid;
@@ -33,8 +34,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> getPosts() {
-        List<PostResponse> responseList = postService.getPosts(1);
+    public ResponseEntity<List<PostResponse>> getPosts(@RequestParam PostSearchRequest postSearchRequest) {
+        List<PostResponse> responseList = postService.getPosts(postSearchRequest);
         return ResponseEntity.ok(responseList);
     }
 }
