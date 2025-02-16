@@ -9,6 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,16 +80,17 @@ class PostServiceTest {
         postRepository.saveAll(requestPosts);
 
         PostSearchRequest postSearchRequest = PostSearchRequest.builder()
-                .page(1)
+                .page(0)
                 .size(10)
                 .build();
 
         // when
-        List<PostResponse> postResponseList = postService.getPosts(postSearchRequest);
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+        Page<PostResponse> postPage = postService.getPosts(pageRequest);
 
         // then
-        assertEquals(10, postResponseList.size());
-        assertEquals("제목 - 1", postResponseList.get(0).title());
-        assertEquals("내용 - 1", postResponseList.get(0).content());
+        assertEquals(10, postPage.getSize());
+        assertEquals("제목 - 30", postPage.getContent().get(0).title());
+        assertEquals("내용 - 30", postPage.getContent().get(0).content());
     }
 }

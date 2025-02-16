@@ -1,17 +1,19 @@
 package com.wondollar.api.post.controller;
 
 import com.wondollar.api.post.request.PostCreateRequest;
-import com.wondollar.api.post.request.PostSearchRequest;
 import com.wondollar.api.post.response.PostResponse;
 import com.wondollar.api.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,8 +36,10 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> getPosts(@RequestParam PostSearchRequest postSearchRequest) {
-        List<PostResponse> responseList = postService.getPosts(postSearchRequest);
+    public ResponseEntity<Page<PostResponse>> getPosts(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PostResponse> responseList = postService.getPosts(pageable);
         return ResponseEntity.ok(responseList);
     }
+
+
 }

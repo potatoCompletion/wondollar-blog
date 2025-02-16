@@ -143,17 +143,37 @@ class PostControllerTest {
         // page 1
         mockMvc.perform(get("/api/v1/posts?page=1&size=10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].title").value("제목 - 1"))
-                .andExpect(jsonPath("$[0].content").value("내용 - 1"))
+                .andExpect(jsonPath("$.size", is(10)))
+                .andExpect(jsonPath("$.content[0].title").value("제목 - 30"))
+                .andExpect(jsonPath("$.content[0].content").value("내용 - 30"))
                 .andDo(print());
 
         // page 2
         mockMvc.perform(get("/api/v1/posts?page=2&size=10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].title").value("제목 - 11"))
-                .andExpect(jsonPath("$[0].content").value("내용 - 11"))
+                .andExpect(jsonPath("$.size", is(10)))
+                .andExpect(jsonPath("$.content[0].title").value("제목 - 20"))
+                .andExpect(jsonPath("$.content[0].content").value("내용 - 20"))
+                .andDo(print());
+    }
+
+    @Test
+    void post_페이지_0_조회_테스트() throws Exception {
+        // given
+        postRepository.saveAll(IntStream.range(1, 31)
+                .mapToObj(i -> Post.builder()
+                        .title("제목 - " + i)
+                        .content("내용 - " + i)
+                        .build())
+                .collect(Collectors.toList()));
+
+        // expected
+        // page 1
+        mockMvc.perform(get("/api/v1/posts?page=0&size=10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size", is(10)))
+                .andExpect(jsonPath("$.content[0].title").value("제목 - 30"))
+                .andExpect(jsonPath("$.content[0].content").value("내용 - 30"))
                 .andDo(print());
     }
 }

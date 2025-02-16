@@ -3,14 +3,12 @@ package com.wondollar.api.post.service;
 import com.wondollar.api.post.domain.Post;
 import com.wondollar.api.post.repository.PostRepository;
 import com.wondollar.api.post.request.PostCreateRequest;
-import com.wondollar.api.post.request.PostSearchRequest;
 import com.wondollar.api.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,10 +29,10 @@ public class PostService {
         return PostResponse.fromPost(post);
     }
 
-    public List<PostResponse> getPosts(PostSearchRequest postSearchRequest) {
-        return postRepository.findPosts(postSearchRequest)
-                .stream()
-                .map(post -> PostResponse.fromPost(post))
-                .collect(Collectors.toList());
+    public Page<PostResponse> getPosts(Pageable pageable) {
+        Page<PostResponse> postPage = postRepository.findAll(pageable)
+                .map(PostResponse::fromPost);
+
+        return postPage;
     }
 }
