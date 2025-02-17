@@ -36,5 +36,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(response.statusCode()).body(response);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
+                .errorList(List.of(e.getMessage()))
+                .build();
 
+        return ResponseEntity.status(response.statusCode()).body(response);
+    }
 }
