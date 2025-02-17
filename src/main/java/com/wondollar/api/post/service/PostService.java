@@ -1,5 +1,6 @@
 package com.wondollar.api.post.service;
 
+import com.wondollar.api.common.exception.customexception.PostNotFoundException;
 import com.wondollar.api.post.domain.Post;
 import com.wondollar.api.post.repository.PostRepository;
 import com.wondollar.api.post.request.PostCreateRequest;
@@ -24,7 +25,7 @@ public class PostService {
 
     public PostResponse getPostById(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFoundException::new);
 
         return PostResponse.fromPost(post);
     }

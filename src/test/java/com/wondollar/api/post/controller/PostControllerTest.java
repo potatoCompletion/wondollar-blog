@@ -176,4 +176,16 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.content[0].content").value("내용 - 30"))
                 .andDo(print());
     }
+
+    @Test
+    void post_존재하지_않는_글_조회_테스트() throws Exception {
+
+        // expected
+        mockMvc.perform(get("/api/v1/posts/1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 글입니다."))
+                .andDo(print());
+    }
 }
