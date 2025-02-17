@@ -70,8 +70,8 @@ class PostControllerTest {
                         .content("{\"title\":\"\", \"content\":\"\"}")
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("400"))
-                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.statusCode").value("400"))
+                .andExpect(jsonPath("$.errorCode").value("INVALID_REQUEST_PARAM"))
                 .andExpect(jsonPath("$.message").value("요청 검증 실패"))
                 .andDo(print());
     }
@@ -183,8 +183,8 @@ class PostControllerTest {
         // expected
         mockMvc.perform(get("/api/v1/posts/1"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("400"))
-                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.statusCode").value("400"))
+                .andExpect(jsonPath("$.errorCode").value("POST_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("존재하지 않는 글입니다."))
                 .andDo(print());
     }

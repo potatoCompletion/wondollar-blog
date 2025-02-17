@@ -6,10 +6,10 @@ import lombok.Builder;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ErrorResponse(int status, String errorCode, String message, List<String> errorList) {
+public record ErrorResponse(int statusCode, String errorCode, String message, List<String> errorList) {
 
     @Builder
     public ErrorResponse(ErrorCode errorCode, List<String> errorList) {
-        this(errorCode.getStatus().value(), errorCode.getStatus().name(), errorCode.getMessage(), errorList);
+        this(errorCode.getStatusCode(), errorCode.name(), errorCode.getMessage(), errorList);
     }
 }

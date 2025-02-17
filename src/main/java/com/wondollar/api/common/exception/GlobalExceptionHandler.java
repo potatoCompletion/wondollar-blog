@@ -20,11 +20,11 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList());
 
         ErrorResponse response = ErrorResponse.builder()
-                .errorCode(ErrorCode.INVALID_REQUEST)
+                .errorCode(ErrorCode.INVALID_REQUEST_PARAM)
                 .errorList(errorList)
                 .build();
 
-        return ResponseEntity.status(response.status()).body(response);
+        return ResponseEntity.status(response.statusCode()).body(response);
     }
 
     @ExceptionHandler(CustomException.class)
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
                 .errorCode(e.getErrorCode())
                 .build();
 
-        return ResponseEntity.status(response.status()).body(response);
+        return ResponseEntity.status(response.statusCode()).body(response);
     }
 
 
